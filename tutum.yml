@@ -1,0 +1,10 @@
+syslogger:
+  image: "gonzalopericacho/syslogger"
+  restart: "on-failure"
+  volumes:
+    - "/var/run/docker.sock:/tmp/docker.sock"
+  environment:
+    - "HOSTNAME=$TUTUM_NODE_HOSTNAME"
+  command:
+    - "YOUR-URI-HERE"
+  deployment_strategy: every_node
