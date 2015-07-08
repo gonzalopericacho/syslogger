@@ -1,21 +1,29 @@
-# tutum/datadog-agent
+# tutum/syslogger
 
 [![Deploy to Tutum](https://s.tutum.co/deploy-to-tutum.svg)](https://dashboard.tutum.co/stack/deploy/)
 
-Datadog agent inside a container optimized for Tutum
+Image based on gliderlabs/logspout optimized for syslog and Tutum
 
 ## Usage
 
-	docker-compose run -d -e API_KEY=<your-api-key> -e HOSTNAME=<your-hostname> datadog
+docker-compose run -d -e HOSTNAME=[YOUR-HOSTNAME] syslogger "[YOUR-URI]"
 
-replacing `<your-api-key>` with the 32 character API key found in your account Integrations APIs and `<your-hostname>` with the name you want it to appear in the DataDog infrastructure list.
+replacing `[YOUR-HOSTNAME]` with the name you want it to appear in your log managment service and `[YOUR-URI]` with the URI you will like to send your logs to.
 
-## Unsupported metrics
+### Example using Papertrail
 
-* Network
-* Process list
+docker-compose run -d -e HOSTNAME=[YOUR-HOSTNAME] syslogger "syslog://[YOUR-PAPERTRAIL-URI]"
+
+replacing `[YOUR-PAPERTRAIL-URI]` with your own papertrail URI. An example of Papertrail URI can be `logs.papertrailapp.com:55555`.
+
+### Example using Loggly
+
+docker-compose run -d -e HOSTNAME=[YOUR-HOSTNAME] syslogger "rfc5424://logs-01.loggly.com:514?structuredData=[YOUR-CUSTOMER-TOKEN]@41058"
+
+replacing `[YOUR-CUSTOMER-TOKEN]` with the customer token that you can find on "Source Setup"->"Customer Tokens".
 
 ## Notes
 
-* Once the containers start running, it can take several minutes to start being monitored by DataDog.
-* Once the DataDog container is stopped, it can take up to 24h for the host to disappear from the infrastructure page, but it will only be part of the host count for billing purposes if we’re actually receiving data.
+* Syslogger is a log router for Docker containers that runs inside Docker. It attaches to all containers on a host, then routes their logs wherever you want. 
+* Right now it can capture stdout and stderr.
+* Syslogger will gather logs from all containers that are started **without the -t option**.
